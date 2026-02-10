@@ -1,6 +1,17 @@
 name = "daily-funny-cat"
 main = "src/index.js"
 compatibility_date = "2024-12-01"
+workers_dev = true
+
+# Custom domain
+routes = [
+  { pattern = "cat.meckman.org", custom_domain = true }
+]
+
+# Static assets (app icons served directly)
+[assets]
+directory = "./public"
+binding = "ASSETS"
 
 # 12:00 UTC = 7:00 AM EST (8:00 AM EDT during daylight saving)
 [triggers]
@@ -17,4 +28,4 @@ bucket_name = "daily-funny-cat"
 
 # Environment variables (non-secret)
 [vars]
-R2_PUBLIC_URL = "https://pub-XXXXX.r2.dev"
+R2_PUBLIC_URL = "https://pub-323bc8e4995e4531b5e3db908cd3dd69.r2.dev"

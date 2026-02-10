@@ -1,0 +1,82 @@
+DAILYFUNNYCAT — SHUTDOWN INSTRUCTIONS
+======================================
+
+Follow these steps to fully shut down the DailyFunnyCat service.
+Run all commands from the DailyFunnyCat project directory.
+
+
+1. STOP THE DAILY CRON (stops sending messages immediately)
+-----------------------------------------------------------
+Delete the Cloudflare Worker:
+
+    wrangler delete
+
+This removes the Worker, the cron schedule, and the custom domain
+route (cat.meckman.org). No more images will be generated or sent.
+
+
+2. DELETE THE R2 BUCKET (removes all stored cat images)
+-------------------------------------------------------
+First empty the bucket, then delete it:
+
+    wrangler r2 object list daily-funny-cat --json | jq -r '.[].key' | while read key; do wrangler r2 object delete daily-funny-cat/"$key"; done
+    wrangler r2 bucket delete daily-funny-cat
+
+
+3. RELEASE THE TWILIO PHONE NUMBER (stops the $1.15/month charge)
+-----------------------------------------------------------------
+Log into Twilio Console:
+    https://www.twilio.com/console/phone-numbers/incoming
+
+Click on (563) 281-5403, scroll to the bottom, and click
+"Release this number."
+
+Or via CLI:
+
+    twilio api:core:incoming-phone-numbers:list -o json
+    twilio api:core:incoming-phone-numbers:remove --sid <SID from above>
+
+
+4. CANCEL A2P 10DLC CAMPAIGN (stops the $2/month campaign fee)
+--------------------------------------------------------------
+Log into Twilio Console:
+    https://www.twilio.com/console/messaging/compliance/a2p-10dlc
+
+Delete your campaign (CM5a154dec51477c0cc8421b404377e416).
+The brand can also be removed from the same page.
+
+
+5. CLOSE TWILIO ACCOUNT (optional — stops all billing)
+------------------------------------------------------
+If you no longer need Twilio at all:
+    https://www.twilio.com/console/account/close
+
+This cancels everything: numbers, campaigns, and billing.
+Any remaining credit balance will be forfeited.
+
+
+6. REMOVE CLOUDFLARE DNS RECORD (optional cleanup)
+---------------------------------------------------
+The Worker deletion in step 1 should remove the cat.meckman.org
+route automatically. If the DNS record lingers, remove it manually:
+
+    Log into Cloudflare Dashboard > meckman.org > DNS
+    Delete the CNAME or A record for "cat"
+
+
+7. DELETE THE GITHUB REPO (optional)
+-------------------------------------
+    gh repo delete MeckMan2025/DailyFunnyCat --yes
+
+Or delete from: https://github.com/MeckMan2025/DailyFunnyCat/settings
+(scroll to "Danger Zone" > Delete this repository)
+
+
+MONTHLY COSTS WHILE RUNNING
+============================
+Twilio phone number:    ~$1.15/month
+A2P 10DLC campaign:     ~$2.00/month
+Twilio MMS (1/day):     ~$0.60-1.50/month
+Cloudflare (all):       $0.00 (free tier)
+--------------------------------------
+Total:                  ~$3.75-4.65/month
