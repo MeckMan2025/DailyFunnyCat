@@ -1,0 +1,9 @@
+{
+  "name": "daily-funny-cat",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --test-scheduled",
+    "deploy": "wrangler deploy"
+  }
+}
